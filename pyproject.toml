@@ -1,0 +1,45 @@
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+multi_line_output = 3
+
+[tool.flake8]
+max-line-length = 79
+ignore = ["B008"]
+inline-quotes = "double"
+
+[tool.poetry]
+name = "to-do-list"
+version = "0.1.0"
+description = ""
+authors = ["Vadim Radzih <iphonevadim2003@gmail.com>"]
+readme = "README.md"
+packages = [{include = "to_do_list"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+alembic = "^1.10.2"
+sqlalchemy = "^2.0.5.post1"
+fastapi = "^0.93.0"
+uvicorn = "^0.20.0"
+asyncpg = "^0.27.0"
+psycopg2-binary = "^2.9.5"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+isort = "^5.10.1"
+black = "^22.10.0"
+mypy = "^0.991"
+flake8-bugbear = "^22.12.6"
+flake8-comprehensions = "^3.10.1"
+flake8-pyproject = "^1.2.2"
+flake8-quotes = "^3.3.1"
+pytest = "^7.2.0"
+autoflake = "^2.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
