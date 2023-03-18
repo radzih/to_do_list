@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, status
 
 from src.core.application.task.dto import TaskList
 from src.core.application.task.use_cases import ListTasks
@@ -36,7 +36,6 @@ DEFAULT_OFFSET = 0
 )
 async def create_user(
     data: requests.UserCreate,
-    response: Response,
     create_user: CreateUser = Depends(Stub(CreateUser)),
 ) -> responses.User:
     user_id = await create_user(dto.UserCreate(**asdict(data)))
@@ -57,7 +56,6 @@ async def create_user(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def update_user(
-    response: Response,
     user_id: models.UserId,
     user_update: requests.UserUpdate,
     update_user: UpdateUser = Depends(Stub(UpdateUser)),
@@ -96,7 +94,6 @@ async def list_users(
 )
 async def get_user(
     user_id: int,
-    response: Response,
     get_user: GetUser = Depends(Stub(GetUser)),
 ):
     user = await get_user(user_id)

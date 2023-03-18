@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, status
 
 from src.core.application.task import dto, exceptions
 from src.core.application.task.use_cases import (
@@ -28,14 +28,9 @@ router = APIRouter(prefix="/v1/task")
 )
 async def create_task(
     data: requests.TaskCreate,
-    response: Response,
     create_task: CreateTask = Depends(Stub(CreateTask)),
 ):
-    try:
-        task_id = await create_task(dto.TaskCreate(**asdict(data)))
-    except exceptions.UserNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
+    task_id = await create_task(dto.TaskCreate(**asdict(data)))
     return responses.TaskId(task_id)
 
 
@@ -52,14 +47,9 @@ async def create_task(
 async def update_task(
     task_id: models.TaskId,
     data: requests.TaskUpdate,
-    response: Response,
     update_task: UpdateTask = Depends(Stub(UpdateTask)),
 ):
-    try:
-        await update_task(dto.TaskUpdate(task_id, **asdict(data)))
-    except exceptions.TaskNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
+    await update_task(dto.TaskUpdate(task_id, **asdict(data)))
 
 
 @router.get(
@@ -73,15 +63,10 @@ async def update_task(
     },
 )
 async def get_task(
-    response: Response,
     task_id: int,
     get_task: GetTask = Depends(Stub(GetTask)),
 ):
-    try:
-        task = await get_task(task_id)
-    except exceptions.TaskNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
+    task = await get_task(task_id)
     return responses.Task(**asdict(task))
 
 
@@ -97,14 +82,9 @@ async def get_task(
 )
 async def delete_task(
     task_id: models.TaskId,
-    response: Response,
     remove_task: RemoveTask = Depends(Stub(RemoveTask)),
 ):
-    try:
-        await remove_task(dto.TaskRemove(task_id))
-    except exceptions.TaskNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
+    await remove_task(dto.TaskRemove(task_id))
 
 
 @router.patch(
@@ -120,16 +100,10 @@ async def delete_task(
 async def set_completed(
     task_id: models.TaskId,
     data: requests.TaskSetCompleted,
-    response: Response,
     update_task: UpdateTask = Depends(Stub(UpdateTask)),
 ) -> None:
-    try:
-        await update_task(
-            dto.TaskUpdate(task_id, None, None, None, data.completed)
-        )
-    except exceptions.TaskNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
+    await update_task(
+        dto.TaskUpdate(task_id, None, None, None, data.completed)
+    )
 
 
-# @router.patch("/{task_id}/incomplete")
