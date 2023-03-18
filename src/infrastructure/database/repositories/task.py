@@ -1,8 +1,7 @@
-from dataclasses import asdict
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import exc, insert, select, update
+from sqlalchemy import exc, insert, update
 
 from src.core.application.shared import interfaces
 from src.core.domain import models
