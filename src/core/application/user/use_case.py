@@ -31,7 +31,7 @@ class GetUser(UseCase):
         user = await self.db_gateway.read_user_by_id(data)
 
         if not user:
-            raise exceptions.UserNotExist(data)
+            raise exceptions.UserNotExists(data)
 
         return dto.User(**asdict(user))
 
@@ -44,7 +44,7 @@ class UpdateUser(UseCase):
         user = await self.db_gateway.read_user_by_id(data.user_id)
 
         if not user:
-            raise exceptions.UserNotExist(data.user_id)
+            raise exceptions.UserNotExists(data.user_id)
 
         user.update(name=data.name, email=data.email)
 
