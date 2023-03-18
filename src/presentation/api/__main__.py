@@ -21,6 +21,7 @@ from src.infrastructure.database.db import (
     create_session_factory,
 )
 from src.presentation.api import providers
+from src.presentation.api.handlers.exceptions import include_exception_handlers
 from src.presentation.api.handlers.setup import include_routers
 
 
@@ -33,6 +34,7 @@ def create_app():
     # TODO: close engine
 
     include_routers(app)
+    include_exception_handlers(app)
     bind_dependencies(app, session_factory)
 
     return app

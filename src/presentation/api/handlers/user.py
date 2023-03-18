@@ -1,7 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi import APIRouter, Depends, Response, status
 
 from src.core.application.task.dto import TaskList
 from src.core.application.task.use_cases import ListTasks
@@ -13,7 +12,7 @@ from src.core.application.user.use_case import (
     UpdateUser,
 )
 from src.core.domain import models
-from src.presentation.api.handlers import helpers, requests, responses
+from src.presentation.api.handlers import requests, responses
 from src.presentation.api.handlers.helpers import PaginationService
 from src.presentation.api.providers.stub import Stub
 
@@ -40,12 +39,7 @@ async def create_user(
     response: Response,
     create_user: CreateUser = Depends(Stub(CreateUser)),
 ) -> responses.User:
-    try:
-        user_id = await create_user(dto.UserCreate(**asdict(data)))
-    except exceptions.UserAlreadyExists as err:
-        response.status_code = status.HTTP_409_CONFLICT
-        return responses.ErrorResult(message=err.message, data=err)
-
+    user_id = await create_user(dto.UserCreate(**asdict(data)))
     return responses.UserId(id=user_id)
 
 
@@ -68,15 +62,7 @@ async def update_user(
     user_update: requests.UserUpdate,
     update_user: UpdateUser = Depends(Stub(UpdateUser)),
 ):
-    try:
-        await update_user(dto.UserUpdate(user_id, **asdict(user_update)))
-    # TODO: create exception handler
-    except exceptions.UserNotExists as err:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return responses.ErrorResult(message=err.message, data=err)
-    except exceptions.UserAlreadyExists as err:
-        response.status_code = status.HTTP_409_CONFLICT
-        return responses.ErrorResult(message=err.message, data=err)
+    await update_user(dto.UserUpdate(user_id, **asdict(user_update)))
 
 
 @router.get(
@@ -113,14 +99,7 @@ async def get_user(
     response: Response,
     get_user: GetUser = Depends(Stub(GetUser)),
 ):
-
-    try:
-        user = await get_user(user_id)
-    except exceptions.UserNotExists as err:
-        # TODO: create exception handler
-        response.status_code = 404
-        return responses.ErrorResult(message=err.message, data=err)
-
+    user = await get_user(user_id)
     return user
 
 

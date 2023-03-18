@@ -1,19 +1,16 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi import APIRouter, Depends, Response, status
 
 from src.core.application.task import dto, exceptions
 from src.core.application.task.use_cases import (
     CreateTask,
     GetTask,
-    ListTasks,
     RemoveTask,
     UpdateTask,
 )
 from src.core.domain import models
-from src.presentation.api.handlers import helpers, requests, responses
-from src.presentation.api.handlers.helpers import PaginationService
+from src.presentation.api.handlers import requests, responses
 from src.presentation.api.providers.stub import Stub
 
 router = APIRouter(prefix="/v1/task")
