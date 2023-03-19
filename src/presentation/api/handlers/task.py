@@ -105,5 +105,3 @@ async def set_completed(
     await update_task(
         dto.TaskUpdate(task_id, None, None, None, data.completed)
     )
-
-

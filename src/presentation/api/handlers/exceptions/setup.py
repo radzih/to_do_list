@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 
+from src.core.application.task.exceptions import TaskNotExists
+from src.core.application.task.exceptions import (
+    UserNotExists as TUserNoeExists,
+)
 from src.core.application.user.exceptions import (
     UserAlreadyExists,
     UserNotExists,
 )
-from src.core.application.task.exceptions import (
-    TaskNotExists,
-    UserNotExists as TUserNoeExists,
-)
 
-from . import user, task
+from . import task, user
 
 
 def include_exception_handlers(app: FastAPI) -> None:
