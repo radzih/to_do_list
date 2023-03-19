@@ -1,6 +1,10 @@
 from sqlalchemy import URL
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.ext.asyncio.session import async_sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from .config import Database
 
@@ -16,13 +20,16 @@ def create_connection_url(db: Database, async_: bool = False) -> URL:
     )
 
 
+def create_sa_engine(url: URL, echo: bool = False) -> AsyncEngine:
+    engine = create_async_engine(url=url, echo=echo)
+
+    return engine
+
+
 def create_session_factory(
-    url: URL, echo: bool = False
+    engine: AsyncEngine,
 ) -> async_sessionmaker[AsyncSession]:
-    engine = create_async_engine(url, echo=echo, future=False)
     return async_sessionmaker(
         bind=engine,
         class_=AsyncSession,
-        expire_on_commit=False,
-        autoflush=False,
     )

@@ -1,11 +1,7 @@
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Request
 
 from src.infrastructure.database import DBGateway
-from src.presentation.api.providers.stub import Stub
 
 
-def db_gateway(
-    session: AsyncSession = Depends(Stub(AsyncSession)),
-) -> DBGateway:
-    return DBGateway(session)
+async def db_gateway(request: Request) -> DBGateway:
+    return DBGateway(request.state.db_session)

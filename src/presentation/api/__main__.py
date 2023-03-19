@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.config import load_config
 from src.core.application.task.use_cases import (
@@ -18,11 +17,13 @@ from src.core.application.user.use_case import (
 from src.infrastructure.database import DBGateway
 from src.infrastructure.database.db import (
     create_connection_url,
+    create_sa_engine,
     create_session_factory,
 )
 from src.presentation.api import providers
 from src.presentation.api.handlers.exceptions import include_exception_handlers
 from src.presentation.api.handlers.setup import include_routers
+from src.presentation.api.middlewares import include_middlewares
 
 
 def create_app():
@@ -30,20 +31,18 @@ def create_app():
     config = load_config()
 
     connection_url = create_connection_url(config.db, async_=True)
-    session_factory = create_session_factory(connection_url, echo=True)
-    # TODO: close engine
+    engine = create_sa_engine(connection_url)
+    session_factory = create_session_factory(engine)
 
     include_routers(app)
     include_exception_handlers(app)
-    bind_dependencies(app, session_factory)
+    bind_dependencies(app)
+    include_middlewares(app, session_factory)
 
     return app
 
 
-def bind_dependencies(
-    app: FastAPI, session_factory: async_sessionmaker
-) -> None:
-    app.dependency_overrides[AsyncSession] = lambda: session_factory()
+def bind_dependencies(app: FastAPI) -> None:
     app.dependency_overrides[DBGateway] = providers.infrastructure.db_gateway
     app.dependency_overrides[ListUsers] = providers.use_cases.list_users
 
