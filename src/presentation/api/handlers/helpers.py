@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 
 from src.presentation.api.handlers import responses
 
-PAGE_SIZE = 10
+PAGE_SIZE = 1
 DEFAULT_OFFSET = 0
 
 Model = TypeVar("Model")
@@ -46,9 +46,9 @@ class PaginationService:
 
     def get_offset_limit(self) -> tuple[int, int]:
         if not self.cursor:
-            cursor = encode_cursor(DEFAULT_OFFSET)
+            self.cursor = encode_cursor(DEFAULT_OFFSET)
         try:
-            self.offset = decode_cursor(cursor)[0]
+            self.offset = decode_cursor(self.cursor)[0]
         # I know its bad
         # TODO: fix except exception
         except Exception:
